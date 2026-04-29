@@ -3,8 +3,12 @@ name: IPQ60XX-LibWrt
 on:
   workflow_dispatch:
   workflow_call:
-  # schedule:
-  #   - cron: 0 20 * * *
+
+permissions:
+  contents: write
+  releases: write
+
+
 
 env:
   REPO_URL: https://github.com/laipeng668/openwrt-6.x.git
