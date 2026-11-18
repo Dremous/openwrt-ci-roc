@@ -338,3 +338,8 @@ fi
 
 ./scripts/feeds update -i -a
 ./scripts/feeds install -a
+
+# 内核分区扩容：link_nn6000 v1/v2 的内核分区上限由 6MiB 调整为 12MiB（与设备侧扩容保持一致）
+ipq60xx_image_mk="target/linux/qualcommax/image/ipq60xx.mk"
+sed -i '/^define Device\/link_nn6000-v1$/,/^endef$/ s/KERNEL_SIZE := 6144k/KERNEL_SIZE := 12288k/' "$ipq60xx_image_mk"
+grep -q 'KERNEL_SIZE := 12288k' "$ipq60xx_image_mk" || { echo "Error: failed to patch kernel partition size in $ipq60xx_image_mk" >&2; exit 1; }
