@@ -103,6 +103,27 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
+        # 测速后切换到最快的 Ubuntu 镜像
+        MIRRORS="http://azure.archive.ubuntu.com/ubuntu http://archive.ubuntu.com/ubuntu http://us-east-2.ec2.archive.ubuntu.com/ubuntu"
+        best_speed=0
+        best_mirror=""
+        for mirror in $MIRRORS; do
+          speed="$(curl -sL -o /dev/null --max-time 10 -w '%{speed_download}' "$mirror/dists/noble/Release" 2>/dev/null | cut -d. -f1 || true)"
+          speed="${speed:-0}"
+          echo "镜像测速：$mirror => ${speed} B/s"
+          if [ "$speed" -gt "$best_speed" ]; then
+            best_speed="$speed"
+            best_mirror="$mirror"
+          fi
+        done
+        if [ -n "$best_mirror" ] && [ "$best_speed" -gt 0 ]; then
+          echo "::notice::选用 Ubuntu 镜像 $best_mirror（${best_speed} B/s）"
+          sudo sed -i -E "s#(URIs:[[:space:]]*)https?://[^[:space:]]+#\1${best_mirror}#" /etc/apt/sources.list.d/ubuntu.sources
+          if [ -f /etc/apt/sources.list ]; then
+            sudo sed -i -E "s#https?://[^[:space:]]*ubuntu\.com/ubuntu#${best_mirror}#g" /etc/apt/sources.list
+          fi
+          grep -E '^URIs:' /etc/apt/sources.list.d/ubuntu.sources || true
+        fi
         sudo -E apt-get -y update
         sudo -E apt-get -y install ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential \
           bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib \
