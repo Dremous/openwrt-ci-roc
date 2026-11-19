@@ -25,4 +25,4 @@ jobs:
       artifact_prefix: IPQ60XX
       manifest_file: libwrt-qualcommax-ipq60xx.manifest
       release_summary: >-
-        这是开启全功能NSS的6.12内核固件，默认主题为Aurora；该固件在ImmortalWrt的基础上，集成了cpufreq、ddns、upnp、wol、vlmcsd、autoreboot、uhttpd、diskman等插件，补充了tmux、dmesg、htop、btop、fdisk、sgdisk、hdparm、smartmontools、zram-swap等工具，并开启BPF/BTF与cgroup BPF内核支持（内核分区已调整为12MiB，需设备已扩容），具体详见IPQ60XX.config和General.config。
+        这是开启全功能NSS的6.12内核固件，默认主题为Aurora；该固件在ImmortalWrt的基础上，集成了cpufreq、ddns、upnp、wol、vlmcsd、autoreboot、uhttpd、diskman等插件，补充了tmux、dmesg、htop、btop、fdisk、sgdisk、hdparm、smartmontools、zram-swap等工具，并开启BPF/BTF、cgroup BPF与tc eBPF内核支持，补充seccomp、namespaces、io_uring、PSI等内核特性（内核分区已调整为12MiB，需设备已扩容），具体详见IPQ60XX.config和General.config。
