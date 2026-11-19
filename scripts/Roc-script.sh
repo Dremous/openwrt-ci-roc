@@ -343,10 +343,3 @@ fi
 ipq60xx_image_mk="target/linux/qualcommax/image/ipq60xx.mk"
 sed -i '/^define Device\/link_nn6000-v1$/,/^endef$/ s/KERNEL_SIZE := 6144k/KERNEL_SIZE := 12288k/' "$ipq60xx_image_mk"
 grep -q 'KERNEL_SIZE := 12288k' "$ipq60xx_image_mk" || { echo "Error: failed to patch kernel partition size in $ipq60xx_image_mk" >&2; exit 1; }
-
-# tc 层 eBPF：Config-kernel.in 未暴露这些符号，直接追加到目标内核 config 片段（NET_CLS_BPF/NET_ACT_BPF 依赖 NET_CLS_ACT）
-qualcommax_kconfig="target/linux/qualcommax/config-6.12"
-for opt in CONFIG_NET_CLS_ACT CONFIG_NET_SCH_INGRESS CONFIG_NET_CLS_BPF CONFIG_NET_ACT_BPF; do
-  grep -q "^${opt}=y$" "$qualcommax_kconfig" || printf '%s=y\n' "$opt" >> "$qualcommax_kconfig"
-done
-grep -q '^CONFIG_NET_CLS_BPF=y$' "$qualcommax_kconfig" || { echo "Error: failed to enable tc eBPF in $qualcommax_kconfig" >&2; exit 1; }
